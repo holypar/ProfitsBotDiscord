@@ -6,7 +6,7 @@ client = discord.Client()
 @client.event
 async def on_ready():
 #Do stuff
-    general_channel = client.get_channel(717256318347378738)
+    general_channel = client.get_channel(717414266487177297)
     await general_channel.send("Hello pussies!")
 
 #Run the client on the server
