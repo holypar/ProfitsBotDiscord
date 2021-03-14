@@ -6,8 +6,6 @@ import bs4
 import requests
 
 
-
-
 #Client (the bot)
 client = commands.Bot(command_prefix = '$')
 @client.command(name = 'version')
@@ -34,39 +32,6 @@ async def ban(context, member: discord.Member, *, reason = None):
     await context.send('User ' + member.display_name + 'has been banned.')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @client.event
 async def on_ready():
 #Do stuff
@@ -76,8 +41,6 @@ async def on_ready():
 
     # df = pd.DataFrame({"A":['Hello', 'Test']})
     # df.to_csv("C:\\Users\pinnd\\OneDrive\\Documents\\ProfitsBotDiscord-1\\Discord Bot\\output.csv")
-
-
 
 
 @client.event
@@ -103,8 +66,26 @@ async def on_message(message):
             
     await client.process_commands(message)
 
+    if message.author == client.user:
+        return   
+
+    if message.content.startswith('pbprice'):
+        #general_channel = client.get_channel(717414266487177297)
+        #Splitting the input from !price to read input text from user.
+        stock = message.content.split(' ')[1]
+        url = "https://finance.yahoo.com/quote/"
+
+        full_url = url + stock
+
+        response = requests.get(full_url).content
+
+        soup = bs4.BeautifulSoup(response, 'html.parser')
+
+        stock_price = soup.findAll(class_ = "Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)")[0].text
+
+        await message.channel.send(f"The stock price for {stock.upper()} is ${stock_price} currently.")
     
 #Run the client on the server
-client.run('ODIwMTg3NjcwMjE4NjcwMDgw.YExhSg.-bNKQoNsQgShe9-Sdiu6NFDxmc8')
+client.run('ODIwMTg3NjcwMjE4NjcwMDgw.YExhSg.4fPa14AfyFIv3CHH1MzqxMzp3UE')
 
 #I made a change
