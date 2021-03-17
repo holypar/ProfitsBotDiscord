@@ -4,6 +4,7 @@ from discord.ext import commands
 import pandas as pd
 import bs4
 import requests
+from yahoo_finance import Share
 
 
 #Client (the bot)
@@ -11,11 +12,12 @@ client = commands.Bot(command_prefix = '$')
 @client.command(name = 'version')
 async def version(context):
 
-    myEmbed = discord.Embed(title="Current Version", description="The bot is in Version 1.0", color = 0x5db35d)
-    myEmbed.add_field(name = "Version Code", value ="v.1.0.0", inline= False)
-    myEmbed.add_field(name="Date Released:", value ="March 13th,2021", inline= False)
-    myEmbed.set_footer(text="This is the footer")
-    myEmbed.set_author(name ="Par")
+    myEmbed = discord.Embed(title="Current Version", description="The bot is in Version 1.0.1", color = 0x5db35d)
+    myEmbed.add_field(name = "Update Log", value ="Can now get stock data by doing pbpr (ticker here)\n\nCan get analyst price targets by doing pbpt (ticker)", inline= False)
+    myEmbed.add_field(name="Future Updates", value ="Stock chart support is my main priority at the moment\n\nHosting the bot once shortly after the charting update is finished.", inline= False)
+    myEmbed.add_field(name="Date Released:", value ="March 17th,2021", inline= False)
+    myEmbed.set_footer(text="Lets get those profits!")
+    myEmbed.set_author(name ="Profits Bot")
 
     await context.message.channel.send(embed = myEmbed)
 
@@ -69,8 +71,7 @@ async def on_message(message):
     if message.author == client.user:
         return   
 
-    if message.content.startswith('pbprice'):
-        #general_channel = client.get_channel(717414266487177297)
+    if message.content.startswith('pbpr'):
         #Splitting the input from !price to read input text from user.
         stock = message.content.split(' ')[1]
         url = "https://finance.yahoo.com/quote/"
@@ -84,8 +85,83 @@ async def on_message(message):
         stock_price = soup.findAll(class_ = "Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)")[0].text
 
         await message.channel.send(f"The stock price for {stock.upper()} is ${stock_price} currently.")
+
+    if message.content.startswith('pbpt'):  #price target
+        #Splitting the input from !price to read input text from user.
+        stock = message.content.split(' ')[1]
+        url = "https://money.cnn.com/quote/forecast/forecast.html?symb="
+
+        full_url = url + stock
+
+        response = requests.get(full_url).content
+
+        soup = bs4.BeautifulSoup(response, 'html.parser')
+
+        price_target = soup.findAll(class_ = "wsod_twoCol clearfix")[0].text
+
+        await message.channel.send(price_target)
+
+
+
+
+
+
+
+
+
+
+    # if message.content.startswith('pbchart'):       #pulls up chart
+    #     stock = message.content.split(' ')[1]
+    #     url = "https://finviz.com/quote.ashx?t="
+
+    #     full_url = url + stock
+
+    #     response = requests.get(full_url).content
+
+    #     soup = bs4.BeautifulSoup(response, 'html.parser')
+
+    #     chart = soup.findAll("img", attrs = {"class" : "chartimg", "id":"chartImgSrc"})
+
+
+
+    #not working :(
+    # if message.content.startswith('pbstats'):  #tells whether or not to buy a stock on diff timeframes
+    #     #Splitting the input from !price to read input text from user.
+    #     stock = message.content.split(' ')[1]
+    #     url = "https://finance.yahoo.com/chart/"
+
+    #     full_url = url + stock
+
+    #     response = requests.get(full_url).content
+
+    #     soup = bs4.BeautifulSoup(response, 'html.parser')
+
+    #     bullorbear1 = soup.findAll("span")
+
+
+    #     await message.channel.send(f" {stock.upper()} is\n{bullorbear1} short term\n{bullorbear2} mid term\n{bullorbear3} longterm term")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 #Run the client on the server
-client.run('ODIwMTg3NjcwMjE4NjcwMDgw.YExhSg.4fPa14AfyFIv3CHH1MzqxMzp3UE')
+client.run('ODIwMTg3NjcwMjE4NjcwMDgw.YExhSg.alJFAV9gGk-EGfhdeA3pNG4PQSQ')
 
 #I made a change
